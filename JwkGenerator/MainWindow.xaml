@@ -1,0 +1,15 @@
+﻿<Window x:Class="JwkGenerator.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:JwkGenerator"
+        mc:Ignorable="d"
+        Title="JWK Generator" Height="450" Width="800">
+    <Grid>
+        <TextBox x:Name="txtResult" HorizontalAlignment="Center" Margin="0,35,0,0" Text="" TextWrapping="Wrap" VerticalAlignment="Top" Width="780" Height="389" />
+        <Button x:Name="btnOpenFile" Content="Choose cert file" HorizontalAlignment="Left" Margin="696,10,0,0" VerticalAlignment="Top" Click="btnOpenFile_Click"/>
+        <TextBox x:Name="txtPassword" HorizontalAlignment="Left" Margin="571,12,0,0" Text="test" TextWrapping="Wrap" VerticalAlignment="Top" Width="120"/>
+        <TextBlock x:Name="tlPassword" HorizontalAlignment="Left" Margin="517,13,0,0" Text="Password:" TextWrapping="Wrap" VerticalAlignment="Top"/>
+    </Grid>
+</Window>
