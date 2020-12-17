@@ -15,15 +15,31 @@ namespace JwkGenerator
             X5c = new[] { Convert.ToBase64String(certificate.RawData) };
             Use = "sig";
 
-            if ((certificate.PrivateKey ?? certificate.PublicKey.Key) is RSA rsa)
+            AsymmetricAlgorithm key = null;
+            var privateKeyIsExportable = false;
+            try
+            {
+                if (certificate.HasPrivateKey)
+                {
+                    key = certificate.PrivateKey;
+                    privateKeyIsExportable = true;
+                }
+            }
+            catch { }
+            if (key == null)
+            {
+                key = certificate.PublicKey.Key;
+            }
+
+            if (key is RSA rsa)
             {
                 Kty = JsonWebAlgorithmsKeyTypes.RSA;
 
-                var parameters = rsa.ExportParameters(certificate.HasPrivateKey);
+                var parameters = rsa.ExportParameters(privateKeyIsExportable);
 
                 E = Base64UrlEncoder.Encode(parameters.Exponent);
                 N = Base64UrlEncoder.Encode(parameters.Modulus);
-                if (certificate.HasPrivateKey)
+                if (privateKeyIsExportable)
                 {
                     D = Base64UrlEncoder.Encode(parameters.D);
                     DP = Base64UrlEncoder.Encode(parameters.DP);
@@ -37,7 +53,7 @@ namespace JwkGenerator
             {
                 Kty = JsonWebAlgorithmsKeyTypes.EllipticCurve;
 
-                var parameters = ecdsa.ExportParameters(certificate.HasPrivateKey);
+                var parameters = ecdsa.ExportParameters(privateKeyIsExportable);
                 X = Base64UrlEncoder.Encode(parameters.Q.X);
                 Y = Base64UrlEncoder.Encode(parameters.Q.Y);
                 Crv = parameters.Curve.Oid.Value switch
@@ -47,7 +63,7 @@ namespace JwkGenerator
                     "1.3.132.0.35" => JsonWebKeyECTypes.P521,
                     _ => throw new InvalidOperationException($"Unsupported curve type of {parameters.Curve.Oid.Value} - {parameters.Curve.Oid.FriendlyName}"),
                 };
-                if (certificate.HasPrivateKey)
+                if (privateKeyIsExportable)
                 {
                     D = Base64UrlEncoder.Encode(parameters.D);
                 }
